@@ -22,7 +22,7 @@ export default class GameView extends POP_UI_BASE {
     @property(cc.Node)
     cannon_head: cc.Node = null;
     @property(cc.Node)
-    physics: cc.Node = null;
+    node_physics: cc.Node = null;
     @property(cc.Label)
     lb_ball_count: cc.Label = null;
     @property(cc.Label)
@@ -71,6 +71,7 @@ export default class GameView extends POP_UI_BASE {
     onLoad() {
         this.bg.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         cc.director.getPhysicsManager().enabled = true;
+        // cc.director.getPhysicsManager().debugDrawFlags = 1;
         for (let i = 0, len = this.balls_ins.length; i < len;) {
             this.balls_pool[i++] = [];
         }
@@ -86,9 +87,10 @@ export default class GameView extends POP_UI_BASE {
         const deltaY = param.getDeltaY();
         const deltaR = Math.sqrt(deltaX * deltaX + deltaY * deltaY) * 0.3;
         const sign = Math.sign(deltaX);
-        let rotation = this.cannon_head.rotation + deltaR * sign;
-        rotation = Math.abs(rotation) >= 85 ? Math.sign(rotation) * 85 : rotation;
-        this.cannon_head.rotation = rotation;
+        // 2.1.0 后改 rotation --> -angle
+        let angle = -this.cannon_head.angle + deltaR * sign;
+        angle = Math.abs(angle) >= 85 ? Math.sign(angle) * 85 : angle;
+        this.cannon_head.angle = -angle;
     }
 
     update(dt) {
@@ -118,7 +120,7 @@ export default class GameView extends POP_UI_BASE {
             this.balls_in_game.some((item) => {
                 if ((item.ball_status === EnumBallStatus.onReady) && (item.ball_type === 0 || this._power_type === 2)) {
                     item.power_scale = this._power_type === 1 ? 2 : 1;
-                    item.fireBall(this.cannon_head.rotation);
+                    item.fireBall(-this.cannon_head.angle);
                     return true;
                 }
                 return false;
@@ -197,12 +199,12 @@ export default class GameView extends POP_UI_BASE {
         this._brick_speed = (brick_min_y > GameConst.ins().ball_init_y + brick_radius * 7) ? 1 : ((brick_min_y > GameConst.ins().ball_init_y + brick_radius * 5) ? 0.9 : 0.6);
     }
 
-    //创建小球
+    // 创建小球
     private createBall(x = GameConst.ins().ball_init_x, y = GameConst.ins().ball_init_y, status = EnumBallStatus.onReady, ball_type = 0) {
         let ball = this.balls_pool[ball_type].shift();
         if (!ball) {
             ball = cc.instantiate(this.balls_ins[ball_type]);
-            this.physics.addChild(ball);
+            this.node_physics.addChild(ball);
         }
         const item = ball.getComponent(BallItem);
         item.init(x, y, status);
@@ -222,7 +224,7 @@ export default class GameView extends POP_UI_BASE {
         let brick = this.bricks_pool[brick_type].shift();
         if (!brick) {
             brick = cc.instantiate(this.bricks_ins[brick_type]);
-            this.physics.addChild(brick);
+            this.node_physics.addChild(brick);
         }
         const item = brick.getComponent(BrickItem);
         brick.active = true;
@@ -233,7 +235,8 @@ export default class GameView extends POP_UI_BASE {
     }
 
     private resetGame() {
-        this.cannon_head.rotation = 10 - Math.random() * 20;
+        this.node_physics.active = true;
+        this.cannon_head.angle = 10 - Math.random() * 20;
         cc.director.getPhysicsManager().enabled = true;
         this._updateDt = 0;
         this._moved_length = 0;
@@ -259,6 +262,7 @@ export default class GameView extends POP_UI_BASE {
     }
 
     private clearGame() {
+        this.node_physics.active = false;
         cc.director.getPhysicsManager().enabled = false;
         this.balls_in_game.forEach((value) => {
             value.reset();
@@ -294,9 +298,9 @@ export default class GameView extends POP_UI_BASE {
             }
             star_item.x = x;
             star_item.y = y;
-            star_item.rotation = 0;
+            star_item.angle = 0;
             star_item.active = true;
-            Tween.get(star_item).to({ rotation: 720, x: targetPos.x, y: targetPos.y }, 800 + 100 * index, Ease.getBackInOut(1.2)).call(() => {
+            Tween.get(star_item).to({ angle: 720, x: targetPos.x, y: targetPos.y }, 800 + 100 * index, Ease.getBackInOut(1.2)).call(() => {
                 star_item.active = false;
                 this._star_pool.push(star_item);
                 Tween.get(this.node_star_img).to({ scale: 1.2 }, 300).to({ scale: 1 }, 300, Ease.backInOut).call(() => {
@@ -324,17 +328,17 @@ export default class GameView extends POP_UI_BASE {
                         if (!img) {
                             img = new cc.Node();
                             img.addComponent(cc.Sprite);
-                            this.physics.addChild(img);
+                            this.node_physics.addChild(img);
                         }
                         img.active = true;
-                        img.rotation = 0;
+                        img.angle = 0;
                         img.getComponent(cc.Sprite).spriteFrame = spriteFrame;
                         img.color = color;
                         const size = Math.random() * 50 + 50;
                         img.width = img.height = size;
                         img.x = x;
                         img.y = y;
-                        Tween.get(img).to({ x: targetPosX, y: targetPosY, width: size / 3, height: size / 3, rotation: 1000 * Math.random() }, Math.random() * 500 + 500).call(() => {
+                        Tween.get(img).to({ x: targetPosX, y: targetPosY, width: size / 3, height: size / 3, angle: 1000 * Math.random() }, Math.random() * 500 + 500).call(() => {
                             img.active = false;
                             this._brick_img_pool.push(img);
                         })
@@ -466,3 +470,5 @@ export default class GameView extends POP_UI_BASE {
 }
 
 // https://github.com/baiyuwubing/firing_balls
+
+// qq 交流群 859642112

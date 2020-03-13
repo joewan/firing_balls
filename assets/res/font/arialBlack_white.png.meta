@@ -1,13 +1,16 @@
 {
-  "ver": "2.2.0",
+  "ver": "2.3.3",
   "uuid": "c163906c-0055-40bd-988c-9b7f15265aba",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "platformSettings": {},
   "subMetas": {
     "arialBlack_white": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "8872e4f2-c455-4feb-8796-658ab51eb8c5",
       "rawTextureUuid": "c163906c-0055-40bd-988c-9b7f15265aba",
       "trimType": "custom",

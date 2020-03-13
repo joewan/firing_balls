@@ -23,7 +23,10 @@
     "NodePool",
     "StudioComponent",
     "Intersection",
-    "Native NetWork"
+    "Native NetWork",
+    "Geom Utils",
+    "3D",
+    "3D Primitive"
   ],
   "facebook": {
     "appID": "",
@@ -49,5 +52,6 @@
   },
   "start-scene": "current",
   "use-customize-simulator": true,
-  "use-project-simulator-setting": true
+  "use-project-simulator-setting": true,
+  "assets-sort-type": "name"
 }

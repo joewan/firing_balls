@@ -110,8 +110,8 @@ export default class BrickItem extends cc.Component {
     }
 
     update(dt) {
-        if (this.lb_hp.node.rotation !== -this.node.rotation) {
-            this.lb_hp.node.rotation = -this.node.rotation;
+        if (this.lb_hp.node.angle !== -this.node.angle) {
+            this.lb_hp.node.angle = -this.node.angle;
         }
     }
 
