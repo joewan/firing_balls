@@ -1,7 +1,7 @@
 import { pop_mgr, UI_CONFIG } from "./pop_mgr"
 import { pool_mgr } from "../pool/pool_mgr"
 import { handler, gen_handler } from "../util"
-import * as Audio from "../../common/audio/audioplayer"
+import * as Audio from "../../common/audio/AudioPlayer"
 // import { wxHttpClient } from "../../common/wxapi/index"
 
 const { ccclass, property } = cc._decorator;
